@@ -1,0 +1,32 @@
+{
+  "editor.tabSize": 2,
+  "editor.indentSize": "tabSize",
+  "editor.detectIndentation": false,
+  "gitlens.codeLens.scopes": [
+		"document"
+	],
+
+  "go.useLanguageServer": true,
+
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": ["--fast-only"],
+  "go.formatTool": "custom",
+  "go.alternateTools": {
+    "customFormatter": "golangci-lint"
+  },
+  "go.formatFlags": [
+    "fmt",
+    "--stdin"
+  ],
+
+
+  "cSpell.words": [
+    "apigo",
+    "caarlos",
+    "godotenv",
+    "gofiber",
+    "joho",
+    "Prefork",
+    "structurize"
+  ],
+}
