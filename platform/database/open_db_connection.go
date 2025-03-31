@@ -1,8 +1,8 @@
 package database
 
 import (
+	"apigo/pkg/configs"
 	"fmt"
-	"os"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -17,15 +17,18 @@ func OpenDBConnection() (*Queries, error) {
 		err error
 	)
 
-	dbType := os.Getenv("DB_TYPE")
+	config, err := configs.GetSQLConfig()
+	if err != nil {
+		return nil, err
+	}
 
-	switch dbType {
+	switch config.DBType {
 	case "postgres":
 		db, err = openPostgresConnection()
 	case "mysql":
 		db, err = openMySQLConnection()
 	default:
-		return nil, fmt.Errorf("error, database type '%s' not supported!", dbType)
+		return nil, fmt.Errorf("error, database type '%s' not supported!", config.DBType)
 	}
 
 	if err != nil {

@@ -23,10 +23,17 @@
   "cSpell.words": [
     "apigo",
     "caarlos",
+    "dbname",
     "godotenv",
     "gofiber",
+    "jackc",
+    "jmoiron",
     "joho",
+    "jwtware",
     "Prefork",
+    "sqlx",
+    "sslmode",
+    "stdlib",
     "structurize"
   ],
 }

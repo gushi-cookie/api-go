@@ -1,10 +1,8 @@
 package database
 
 import (
+	"apigo/pkg/configs"
 	"apigo/pkg/utils"
-	"os"
-	"strconv"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 
@@ -12,20 +10,20 @@ import (
 )
 
 func openMySQLConnection() (*sqlx.DB, error) {
-	maxConn, _ := strconv.Atoi(os.Getenv("DB_MAX_CONNECTIONS"))
-	maxIdleConn, _ := strconv.Atoi(os.Getenv("DB_MAX_IDLE_CONNECTIONS"))
-	maxLifetimeConn, _ := strconv.Atoi(os.Getenv("DB_MAX_LIFETIME_CONNECTIONS"))
-
 	connURL, err := utils.ConnectionUrlBuilder("mysql")
 	if err != nil {
 		return nil, err
 	}
 
-	db, err := sqlx.Connect("mysql", connURL)
+	config, err := configs.GetSQLConfig()
+	if err != nil {
+		return nil, err
+	}
 
-	db.SetMaxOpenConns(maxConn)
-	db.SetMaxIdleConns(maxIdleConn)
-	db.SetConnMaxLifetime(time.Duration(maxLifetimeConn))
+	db, err := sqlx.Connect("mysql", connURL)
+	db.SetMaxOpenConns(config.MaxConns)
+	db.SetMaxIdleConns(config.MaxIdleConns)
+	db.SetConnMaxLifetime(config.MaxConnLifetime)
 
 	return db, nil
 }

@@ -1,19 +1,24 @@
 package middlewares
 
 import (
-	"os"
+	"apigo/pkg/configs"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 )
 
-func JWTProtected() fiber.Handler {
+func PrepareJWTMiddleware() (fiber.Handler, error) {
+	jwtConfig, err := configs.GetJWTConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	config := jwtware.Config{
-		SigningKey: jwtware.SigningKey{Key: []byte(os.Getenv("JWT_SECRET_KEY"))},
+		SigningKey: jwtware.SigningKey{Key: []byte(jwtConfig.SecretKey)},
 		ErrorHandler: errorHandler,
 	}
 
-	return jwtware.New(config)
+	return jwtware.New(config), nil
 }
 
 func errorHandler(ctx *fiber.Ctx, err error) error {

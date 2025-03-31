@@ -10,7 +10,7 @@ type fiberConfigParsable struct {
 	ReadTimeout int `env:"SERVER_READ_TIMEOUT" validate:"required"`
 	AppName string `env:"SERVER_APP_NAME" envDefault:"api-go"`
 	Host string `env:"SERVER_HOST" validate:"required"`
-	Port uint8 `env:"SERVER_PORT" variable:"required"`
+	Port uint8 `env:"SERVER_PORT" validate:"required"`
 }
 
 // Extended fiber config.

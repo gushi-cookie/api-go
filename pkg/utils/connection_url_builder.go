@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"apigo/pkg/configs"
 	"fmt"
-	"os"
 )
 
 func ConnectionUrlBuilder(target string) (string, error) {
@@ -10,29 +10,40 @@ func ConnectionUrlBuilder(target string) (string, error) {
 
 	switch target {
 	case "fiber":
-		url = fmt.Sprintf(
-			"%s:%s",
-			os.Getenv("SERVER_HOST"),
-			os.Getenv("SERVER_PORT"),
-		)
+		config, err := configs.GetFiberConfig()
+		if err != nil {
+			return "", err
+		}
+
+		url = fmt.Sprintf("%s:%d", config.Host, config.Port)
 	case "mysql":
+		config, err := configs.GetSQLConfig()
+		if err != nil {
+			return "", err
+		}
+
 		url = fmt.Sprintf(
-			"%s:%s@tcp(%s:%s)/%s",
-			os.Getenv("DB_USER"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_PORT"),
-			os.Getenv("DB_NAME"),
+			"%s:%s@tcp(%s:%d)/%s",
+			config.User,
+			config.Password,
+			config.Host,
+			config.Port,
+			config.DBName,
 		)
 	case "postgres":
+		config, err := configs.GetSQLConfig()
+		if err != nil {
+			return "", err
+		}
+
 		url = fmt.Sprintf(
-			"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_PORT"),
-			os.Getenv("DB_USER"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_NAME"),
-			os.Getenv("DB_SSL_MODE"),
+			"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+			config.Host,
+			config.Port,
+			config.User,
+			config.Password,
+			config.DBName,
+			config.SSLMode,
 		)
 	default:
 		return "", fmt.Errorf("connection target '%v' not supported", target)
