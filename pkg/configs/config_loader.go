@@ -12,7 +12,9 @@ var isConfigLoaded = false
 // in the environments storage. Do nothing if
 // the config is already loaded.
 func loadDotEnvConfig() error {
-	if isConfigLoaded { return nil }
+	if isConfigLoaded {
+		return nil
+	}
 
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -38,8 +40,9 @@ func reloadDotEnvConfig() error {
 // Parse and validate a config structure. It is supposed that
 // corresponding environments are already loaded. Structure tags
 // from these packages can be used:
-//  "caarlos0/env/v11"
-//  "go-playground/validator/v10"
+//
+//	"caarlos0/env/v11"
+//	"go-playground/validator/v10"
 func scanConfig(structure interface{}) error {
 	err := env.Parse(&structure)
 	if err != nil {

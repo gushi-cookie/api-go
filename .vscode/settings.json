@@ -10,15 +10,10 @@
 
   "go.lintTool": "golangci-lint",
   "go.lintFlags": ["--fast-only"],
-  "go.formatTool": "custom",
+  "go.formatTool": "gofmt",
   "go.alternateTools": {
     "customFormatter": "golangci-lint"
   },
-  "go.formatFlags": [
-    "fmt",
-    "--stdin"
-  ],
-
 
   "cSpell.words": [
     "apigo",

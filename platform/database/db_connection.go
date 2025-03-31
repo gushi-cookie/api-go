@@ -1,6 +1,7 @@
 package database
 
 import (
+	"apigo/app/queries"
 	"apigo/pkg/configs"
 	"fmt"
 
@@ -8,12 +9,12 @@ import (
 )
 
 type Queries struct {
-	*sqlx.DB
+	*queries.UserQueries
 }
 
 func OpenDBConnection() (*Queries, error) {
 	var (
-		db *sqlx.DB
+		db  *sqlx.DB
 		err error
 	)
 
@@ -36,6 +37,6 @@ func OpenDBConnection() (*Queries, error) {
 	}
 
 	return &Queries{
-		DB: db,
+		&queries.UserQueries{DB: db},
 	}, nil
 }

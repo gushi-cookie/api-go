@@ -9,20 +9,23 @@ var instance *validator.Validate
 
 func initValidator() error {
 	validate := validator.New()
-	var err error
 
-	err = validate.RegisterValidation("uuid", func(fl validator.FieldLevel) bool {
+	err := validate.RegisterValidation("uuid", func(fl validator.FieldLevel) bool {
 		_, err := uuid.Parse(fl.Field().String())
 		return err != nil
 	})
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	instance = validate
 	return nil
 }
 
 func NewModelsValidator() (*validator.Validate, error) {
-	if instance != nil { return instance, nil }
+	if instance != nil {
+		return instance, nil
+	}
 
 	err := initValidator()
 	return instance, err

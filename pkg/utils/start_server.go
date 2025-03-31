@@ -29,5 +29,5 @@ func StartServerWithGracefulShutdown(app *fiber.App) {
 		log.Printf("Couldn't start the server! Reason: %v", err)
 	}
 
-	<- idleChan
+	<-idleChan
 }

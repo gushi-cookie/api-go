@@ -45,6 +45,17 @@ func ConnectionUrlBuilder(target string) (string, error) {
 			config.DBName,
 			config.SSLMode,
 		)
+	case "redis":
+		config, err := configs.GetRedisConfig()
+		if err != nil {
+			return "", err
+		}
+
+		url = fmt.Sprintf(
+			"%s:%d",
+			config.Host,
+			config.Port,
+		)
 	default:
 		return "", fmt.Errorf("connection target '%v' not supported", target)
 	}

@@ -1,8 +1,8 @@
 package configs
 
 type JWTConfig struct {
-	SecretKey string `env:"JWT_SECRET_KEY" validate:"required"`
-	ExpiresInMinutes int `env:"JWT_REFRESH_KEY" validate:"required"`
+	SecretKey        string `env:"JWT_SECRET_KEY" validate:"required"`
+	ExpiresInMinutes int    `env:"JWT_REFRESH_KEY" validate:"required"`
 }
 
 var jwtConfigInstance *JWTConfig

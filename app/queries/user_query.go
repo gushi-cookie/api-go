@@ -2,7 +2,6 @@ package queries
 
 import "github.com/jmoiron/sqlx"
 
-type AuthQueries struct {
+type UserQueries struct {
 	*sqlx.DB
 }
-
