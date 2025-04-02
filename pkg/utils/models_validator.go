@@ -1,11 +1,13 @@
 package utils
 
 import (
+	"log"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
-var instance *validator.Validate
+var modelsValidatorInstance *validator.Validate
 
 func initValidator() error {
 	validate := validator.New()
@@ -18,15 +20,20 @@ func initValidator() error {
 		return err
 	}
 
-	instance = validate
+	modelsValidatorInstance = validate
 	return nil
 }
 
 func NewModelsValidator() (*validator.Validate, error) {
-	if instance != nil {
-		return instance, nil
+	if modelsValidatorInstance != nil {
+		return modelsValidatorInstance, nil
 	}
 
 	err := initValidator()
-	return instance, err
+	if err != nil {
+		log.Printf("Couldn't initiate models validator. Reason: %v", err)
+		return nil, err
+	}
+
+	return modelsValidatorInstance, nil
 }
