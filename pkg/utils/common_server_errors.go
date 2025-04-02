@@ -6,7 +6,7 @@ import (
 )
 
 func WrapInternalServerError(handlerName string, err error, ctx *fiber.Ctx) error {
-	log.Errorf("Handler '%s' has encountered an error. Reason: %w", handlerName, ctx)
+	log.Errorf("Handler '%s' has encountered an error. Reason: %w", handlerName, err)
 
 	return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 		"message": "Something went wrong.",

@@ -15,9 +15,14 @@
     "customFormatter": "golangci-lint"
   },
 
+  "shellcheck.exclude": [
+    "2181"
+  ],
+
   "cSpell.words": [
     "apigo",
     "caarlos",
+    "capturable",
     "dbname",
     "godotenv",
     "gofiber",
@@ -28,6 +33,7 @@
     "jwtware",
     "Payolad",
     "Prefork",
+    "signup",
     "sqlx",
     "sslmode",
     "stdlib",
