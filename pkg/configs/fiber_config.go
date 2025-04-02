@@ -10,14 +10,14 @@ type fiberConfigParsable struct {
 	ReadTimeout int    `env:"SERVER_READ_TIMEOUT" validate:"required"`
 	AppName     string `env:"SERVER_APP_NAME" envDefault:"api-go"`
 	Host        string `env:"SERVER_HOST" validate:"required"`
-	Port        uint8  `env:"SERVER_PORT" validate:"required"`
+	Port        uint16 `env:"SERVER_PORT" validate:"required"`
 }
 
 // Extended fiber config.
 type FiberConfig struct {
 	*fiber.Config
 	Host string
-	Port uint8
+	Port uint16
 }
 
 var fiberConfigInstance *FiberConfig
@@ -55,7 +55,9 @@ func createFiberConfig() (*FiberConfig, error) {
 		return nil, err
 	}
 
-	config := &FiberConfig{}
+	config := &FiberConfig{
+		Config: &fiber.Config{},
+	}
 
 	config.ReadTimeout = time.Second * time.Duration(parsed.ReadTimeout)
 	config.Host = parsed.Host

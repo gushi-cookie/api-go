@@ -3,6 +3,7 @@ package database
 import (
 	"apigo/pkg/configs"
 	"apigo/pkg/utils"
+	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -26,7 +27,7 @@ func openPostgresConnection() (*sqlx.DB, error) {
 
 	db.SetMaxOpenConns(config.MaxConns)
 	db.SetMaxIdleConns(config.MaxIdleConns)
-	db.SetConnMaxLifetime(config.MaxConnLifetime)
+	db.SetConnMaxLifetime(time.Duration(config.MaxConnLifetime))
 
 	return db, nil
 }

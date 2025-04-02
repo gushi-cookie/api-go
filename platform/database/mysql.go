@@ -3,6 +3,7 @@ package database
 import (
 	"apigo/pkg/configs"
 	"apigo/pkg/utils"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 
@@ -23,7 +24,7 @@ func openMySQLConnection() (*sqlx.DB, error) {
 	db, err := sqlx.Connect("mysql", connURL)
 	db.SetMaxOpenConns(config.MaxConns)
 	db.SetMaxIdleConns(config.MaxIdleConns)
-	db.SetConnMaxLifetime(config.MaxConnLifetime)
+	db.SetConnMaxLifetime(time.Duration(config.MaxConnLifetime))
 
 	return db, nil
 }

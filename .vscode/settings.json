@@ -21,6 +21,7 @@
     "dbname",
     "godotenv",
     "gofiber",
+    "isset",
     "jackc",
     "jmoiron",
     "joho",

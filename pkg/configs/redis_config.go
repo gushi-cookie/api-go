@@ -2,9 +2,9 @@ package configs
 
 type RedisConfig struct {
 	Host     string `env:"REDIS_HOST" validate:"required"`
-	Port     uint8  `env:"REDIS_PORT" validate:"required"`
-	Password string `env:"REDIS_PASSWORD" validate:"require"`
-	DBNumber int    `env:"REDIS_DB_NUMBER" validate:"require"`
+	Port     uint16 `env:"REDIS_PORT" validate:"required"`
+	Password string `env:"REDIS_PASSWORD" validate:"required"`
+	DBNumber int    `env:"REDIS_DB_NUMBER"`
 }
 
 var redisConfigInstance *RedisConfig
@@ -22,7 +22,7 @@ func GetRedisConfig() (*RedisConfig, error) {
 
 	config := &RedisConfig{}
 
-	err = scanConfig(&config)
+	err = scanConfig(config)
 	if err != nil {
 		return nil, err
 	}

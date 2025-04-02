@@ -44,12 +44,12 @@ func reloadDotEnvConfig() error {
 //	"caarlos0/env/v11"
 //	"go-playground/validator/v10"
 func scanConfig(structure interface{}) error {
-	err := env.Parse(&structure)
+	err := env.Parse(structure)
 	if err != nil {
 		return err
 	}
 
-	err = validator.New().Struct(&structure)
+	err = validator.New().Struct(structure)
 	if err != nil {
 		return err
 	}
