@@ -53,6 +53,24 @@ down_command() {
   migrate -path "$path" -database "$url" -verbose down
 }
 
+create_command() {
+  # [control]
+
+  if [[ $# -eq 0 ]]; then
+    printf "Usage: migrate.sh create <migration_name>\n" >&2
+    return 1
+  fi
+
+  local name="$1"
+  shift
+
+  local path
+  path="$(get_migrations_path)"
+  [ $? -ne 0 ] && return 1
+
+  migrate create -ext sql -dir "$path" -seq "$name"
+}
+
 url_command() {
   # [control]
 
@@ -82,6 +100,10 @@ print_help_message() {
     '    url      Do not apply migrations just return'
     '             the database connection url.'
     ''
+    '    create   Create a new sequential migration.'
+    '             Requires a single argument that represents'
+    '             the name of new migration files.'
+    ''
     '    help     Print this message.'
   )
 
@@ -103,10 +125,11 @@ shift
 case "$selected_command" in
   'up') up_command;;
   'down') down_command;;
+  'create') create_command "$@";;
   'url') url_command;;
   'help') print_help_message; exit 0;;
   *)
-    printf "Command ${selected_command} not recognized. See 'migrate.sh help' for more info." >&2
+    printf "Command '%s' not recognized. See 'migrate.sh help' for more info.\n" "${selected_command}" >&2
     exit 1
     ;;
 esac
