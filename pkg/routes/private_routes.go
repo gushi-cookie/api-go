@@ -16,4 +16,5 @@ func PrivateRoutes(app *fiber.App) {
 	}
 
 	router.Post("/user/signout", jwtHandler, controllers.UserSignOut)
+	router.Post("/user/renew-tokens", jwtHandler, controllers.RenewTokens)
 }

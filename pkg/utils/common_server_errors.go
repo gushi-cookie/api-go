@@ -12,3 +12,9 @@ func WrapInternalServerError(handlerName string, err error, ctx *fiber.Ctx) erro
 		"message": "Something went wrong.",
 	})
 }
+
+func WrapUnauthorized(ctx *fiber.Ctx, message string) error {
+	return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+		"message": message,
+	})
+}

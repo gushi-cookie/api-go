@@ -70,7 +70,7 @@ func generateRefreshToken() (string, *time.Duration, error) {
 		return "", nil, err
 	}
 
-	expiresAt := time.Now().Add(time.Minute + time.Duration(config.RefreshKeyExpiresInMinutes))
+	expiresAt := time.Now().Add(time.Minute * time.Duration(config.RefreshKeyExpiresInMinutes))
 	expiresIn := expiresAt.Sub(time.Now())
 
 	token := hex.EncodeToString(hash.Sum(nil)) + "." + fmt.Sprint(expiresAt.Unix())
