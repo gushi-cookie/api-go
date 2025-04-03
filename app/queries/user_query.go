@@ -38,3 +38,16 @@ func (q *UserQueries) CreateUser(user *models.User) error {
 
 	return err
 }
+
+func (q *UserQueries) HasUserByEmail(email string) (bool, error) {
+	query := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`
+
+	var exists bool
+	err := q.Get(&exists, query, email)
+
+	if err != nil {
+		return false, err
+	} else {
+		return exists, nil
+	}
+}

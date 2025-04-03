@@ -37,9 +37,18 @@ func UserSignUp(ctx *fiber.Ctx) error {
 		return utils.WrapInternalServerError("UserSignUp", err, ctx)
 	}
 
+	if exists, err := db.HasUserByEmail(signUp.Email); err != nil {
+		return utils.WrapInternalServerError("UserSignUp", err, ctx)
+	} else if exists {
+		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"message": "the email already registered.",
+		})
+	}
+
 	user := &models.User{}
 	user.ID = uuid.New()
 	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 	user.Email = signUp.Email
 	if hash, err := utils.HashPassword(signUp.Password); err != nil {
 		return utils.WrapInternalServerError("UserSignUp", err, ctx)
