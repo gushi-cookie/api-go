@@ -2,6 +2,7 @@ package routes
 
 import (
 	"apigo/app/controllers"
+	"apigo/pkg/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -9,5 +10,10 @@ import (
 func PrivateRoutes(app *fiber.App) {
 	router := app.Group("/api")
 
-	router.Post("/user/signout", controllers.UserSignOut)
+	jwtHandler, err := middlewares.PrepareJWTMiddleware()
+	if err != nil {
+		panic("to-do")
+	}
+
+	router.Post("/user/signout", jwtHandler, controllers.UserSignOut)
 }

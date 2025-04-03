@@ -111,7 +111,7 @@ func UserSignIn(ctx *fiber.Ctx) error {
 		return utils.WrapInternalServerError("UserSignIn", err, ctx)
 	}
 
-	err = redisConn.Set(context.Background(), user.ID.String(), tokens.Refresh, 0).Err()
+	err = redisConn.Set(context.Background(), user.ID.String(), tokens.Refresh, tokens.RefreshExpiresIn).Err()
 	if err != nil {
 		return utils.WrapInternalServerError("UserSignIn", err, ctx)
 	}
@@ -128,9 +128,7 @@ func UserSignIn(ctx *fiber.Ctx) error {
 func UserSignOut(ctx *fiber.Ctx) error {
 	payload, err := utils.ExtractJWTPayolad(ctx)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "request token is invalid.",
-		})
+		return utils.WrapInternalServerError("UserSignOut", err, ctx)
 	}
 
 	redisConn, err := cache.OpenRedisConnection()
@@ -143,7 +141,5 @@ func UserSignOut(ctx *fiber.Ctx) error {
 		return utils.WrapInternalServerError("UserSignOut", err, ctx)
 	}
 
-	return ctx.Status(fiber.StatusNoContent).JSON(fiber.Map{
-		"message": "OK",
-	})
+	return ctx.SendStatus(fiber.StatusNoContent)
 }

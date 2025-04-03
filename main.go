@@ -20,6 +20,7 @@ func main() {
 	middlewares.FiberMiddleware(app)
 
 	routes.PublicRoutes(app)
+	routes.PrivateRoutes(app)
 
 	utils.StartServerWithGracefulShutdown(app)
 }

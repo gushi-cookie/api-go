@@ -2,6 +2,8 @@ package middlewares
 
 import (
 	"apigo/pkg/configs"
+	"apigo/pkg/utils"
+	"strings"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
@@ -22,15 +24,15 @@ func PrepareJWTMiddleware() (fiber.Handler, error) {
 }
 
 func errorHandler(ctx *fiber.Ctx, err error) error {
-	if err.Error() == "Missing or malformed JWT" {
+	if strings.Contains(err.Error(), "Missing or malformed JWT") {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
+			"message": "token is invalid.",
+		})
+	} else if strings.Contains(err.Error(), "token is expired") {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "token has expired.",
 		})
 	}
 
-	return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-		"error": true,
-		"msg":   err.Error(),
-	})
+	return utils.WrapInternalServerError("JWTMiddleware", err, ctx)
 }

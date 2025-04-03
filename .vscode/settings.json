@@ -15,9 +15,8 @@
     "customFormatter": "golangci-lint"
   },
 
-  "shellcheck.exclude": [
-    "2181"
-  ],
+  "shellcheck.exclude": ["2181"],
+  "shellcheck.ignorePatterns": {".env*": true},
 
   "cSpell.words": [
     "apigo",

@@ -3,6 +3,7 @@ package utils
 import (
 	"apigo/pkg/configs"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,11 +32,14 @@ func ExtractJWTPayolad(ctx *fiber.Ctx) (*JWTPayolad, error) {
 		return nil, err
 	}
 
-	expiresAt := claims["id"].(int64)
+	expiresAt, ok := claims["exp"].(float64)
+	if !ok {
+		return nil, fmt.Errorf("couldn't extract 'exp' claim")
+	}
 
 	return &JWTPayolad{
 		UserID:    userId,
-		ExpiresAt: expiresAt,
+		ExpiresAt: int64(expiresAt),
 	}, nil
 }
 
@@ -45,7 +49,7 @@ func verifyToken(ctx *fiber.Ctx) (*jwt.Token, error) {
 }
 
 func extractToken(ctx *fiber.Ctx) string {
-	split := strings.Split(ctx.Get("Authorization"), ".")
+	split := strings.Split(ctx.Get("Authorization"), " ")
 
 	if len(split) == 2 {
 		return split[1]
