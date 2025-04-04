@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"apigo/app/models"
+	"apigo/pkg/cleanup"
 	"apigo/pkg/utils"
 	"apigo/platform/cache"
 	"apigo/platform/database"
@@ -13,8 +14,8 @@ import (
 )
 
 func UserSignUp(ctx *fiber.Ctx) error {
+	// 1. Parsing and validating the body
 	signUp := &models.SignUp{}
-
 	if err := ctx.BodyParser(signUp); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
@@ -32,19 +33,27 @@ func UserSignUp(ctx *fiber.Ctx) error {
 		})
 	}
 
-	db, err := database.OpenDBConnection()
+	// 2. Opening a db transaction connection
+	tx, db, err := database.OpenDBTransaction()
 	if err != nil {
 		return utils.WrapInternalServerError("UserSignUp", err, ctx)
 	}
 
-	if exists, err := db.HasUserByEmail(signUp.Email); err != nil {
+	// 3. Preparing db cleanup
+	shouldRollback := true
+	defer cleanup.CloseDBTransaction("UserSignUp", tx, db, &shouldRollback)
+
+	// 4. Checking if passed nickname and email are registered
+	match, err := tx.HasUserByNicknameOrEmail(signUp.Nickname, signUp.Email)
+	if err != nil {
 		return utils.WrapInternalServerError("UserSignUp", err, ctx)
-	} else if exists {
+	} else if match {
 		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{
-			"message": "the email already registered.",
+			"message": "the email or nickname already registered.",
 		})
 	}
 
+	// 5. Forming User and UserProfile valid instances
 	user := &models.User{}
 	user.ID = uuid.New()
 	user.CreatedAt = time.Now()
@@ -60,16 +69,40 @@ func UserSignUp(ctx *fiber.Ctx) error {
 		return utils.WrapInternalServerError("UserSignUp", err, ctx)
 	}
 
-	err = db.CreateUser(user)
+	profile := &models.UserProfile{}
+	profile.UserId = user.ID
+	profile.Nickname = signUp.Nickname
+	profile.Bio = signUp.Bio
+
+	if err := validator.Struct(profile); err != nil {
+		return utils.WrapInternalServerError("UserSignUp", err, ctx)
+	}
+
+	// 6. Inserting models
+	err = tx.CreateUser(user, profile)
 	if err != nil {
 		return utils.WrapInternalServerError("UserSignUp", err, ctx)
 	}
 
+	err = tx.Commit()
+	if err != nil {
+		return utils.WrapInternalServerError("UserSignUp", err, ctx)
+	}
+
+	// 7. Making the response
 	user.PassHash = ""
-	return ctx.JSON(fiber.Map{
+
+	err = ctx.JSON(fiber.Map{
 		"message": "User has been created.",
 		"user":    user,
+		"profile": profile,
 	})
+	if err != nil {
+		return err
+	}
+
+	shouldRollback = false
+	return nil
 }
 
 func UserSignIn(ctx *fiber.Ctx) error {
