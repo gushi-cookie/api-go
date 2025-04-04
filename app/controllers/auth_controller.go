@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"apigo/app/dto"
 	"apigo/app/models"
 	"apigo/pkg/cleanup"
 	"apigo/pkg/utils"
@@ -15,7 +16,7 @@ import (
 
 func UserSignUp(ctx *fiber.Ctx) error {
 	// 1. Parsing and validating the body
-	signUp := &models.SignUp{}
+	signUp := &dto.SignUpRequest{}
 	if err := ctx.BodyParser(signUp); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
@@ -90,12 +91,13 @@ func UserSignUp(ctx *fiber.Ctx) error {
 	}
 
 	// 7. Making the response
-	user.PassHash = ""
-
-	err = ctx.JSON(fiber.Map{
-		"message": "User has been created.",
-		"user":    user,
-		"profile": profile,
+	err = ctx.JSON(dto.SignUpResponse{
+		Message: "user has been created.",
+		User: dto.NewUser{
+			ID:       user.ID,
+			Nickname: profile.Nickname,
+			Bio:      profile.Bio,
+		},
 	})
 	if err != nil {
 		return err
@@ -106,7 +108,7 @@ func UserSignUp(ctx *fiber.Ctx) error {
 }
 
 func UserSignIn(ctx *fiber.Ctx) error {
-	signIn := &models.SignIn{}
+	signIn := &dto.SignInRequest{}
 
 	if err := ctx.BodyParser(signIn); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -158,11 +160,11 @@ func UserSignIn(ctx *fiber.Ctx) error {
 		return utils.WrapInternalServerError("UserSignIn", err, ctx)
 	}
 
-	return ctx.JSON(fiber.Map{
-		"message": "OK",
-		"tokens": fiber.Map{
-			"access":  tokens.Access,
-			"refresh": tokens.Refresh,
+	return ctx.JSON(dto.SignInResponse{
+		Message: "Ok",
+		Tokens: dto.Tokens{
+			Access:  tokens.Access,
+			Refresh: tokens.Refresh,
 		},
 	})
 }

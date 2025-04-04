@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"apigo/app/models"
+	"apigo/app/dto"
 	"apigo/pkg/utils"
 	"apigo/platform/cache"
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 func RenewTokens(ctx *fiber.Ctx) error {
-	renewBody := &models.RenewTokens{}
+	renewBody := &dto.RenewTokensRequest{}
 
 	if err := ctx.BodyParser(renewBody); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -62,11 +62,11 @@ func RenewTokens(ctx *fiber.Ctx) error {
 		return utils.WrapInternalServerError("RenewTokens", err, ctx)
 	}
 
-	return ctx.JSON(fiber.Map{
-		"message": "tokens successfully renewed.",
-		"tokens": fiber.Map{
-			"access":  tokens.Access,
-			"refresh": tokens.Refresh,
+	return ctx.JSON(dto.RenewTokensResponse{
+		Message: "tokens successfully renewed.",
+		Tokens: dto.Tokens{
+			Access:  tokens.Access,
+			Refresh: tokens.Refresh,
 		},
 	})
 }
